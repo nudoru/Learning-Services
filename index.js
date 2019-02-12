@@ -22,46 +22,18 @@ let Task                             = require('data.task'),
       anonymizeName,
       anonymizeStatements
     }                                = require('./lib/utils'),
-    rawLogFile = require('./lyndaraw.json');
+    rawLogFile = require('./lyndaraw.json'); // load a previous query of all non-anonymized statements
 
-const sendTestStatement = () => {
-  let fragment = {
-    subjectName: 'Blue Berry',
-    subjectID  : 'blueberry@pietown.com',
-    verbDisplay: 'completed',
-    objectName : 'Filling the pies',
-    objectType : 'course',
-    objectID   : 'http://pietown.com/Apple_Pie_Filling_101'
-  };
-
-  //sendStatement(config.webservice.lrs, createStatement(fragment)).fork(console.warn, log);
-  sendFragment(config.webservice.lrs)(fragment).fork(console.warn, log);
-};
-
+// Get all statements for a user from the LRS store
 const queryStatements = () => {
-  //requestStatements(config.webservice.lrs)(createAgentEmailQuery('mperkins@redhat.com')).fork(console.warn, log);
-  requestAllStatements(config.webservice.lrs)(createAgentEmailQuery('tepatel@redhat.com')).fork(console.warn, res => {
+  requestAllStatements(config.webservice.lrs)(createAgentEmailQuery('mperkins@redhat.com')).fork(console.warn, res => {
     //console.log(JSON.stringify(res));
     writefile(JSON.stringify(res));
     console.log('got statments', res.length);
   });
 };
 
-//setLRSOptions(config.webservice.lrs);
-//sendTestStatement();
-//queryStatements();
-
-//['statement.verb.display.en-US']: 'loggedin'
-
-// console.log(createAggregateQuery({['statement.verb.display.en-US']: 'completed'}))
-
-// Will extract and write all statements from the given LRS store
-// writeTask(requestAggregate(config.webservice.lrs, createAggregateQuery()));
-
-// writeTask(requestAggregate(config.webservice.lrs, createAggregateQuery({
-//  ['statement.actor.mbox']        : 'mailto:mperkins@redhat.com'
-// })));
-
 
 let anon = anonymizeStatements(rawLogFile, 'mbox');
+// Write the output to a file
 writefile(JSON.stringify(anon), 'lynda-anon.log');
